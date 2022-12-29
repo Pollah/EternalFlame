@@ -1,0 +1,45 @@
+import forexconnect
+import time
+
+# Connect to the ForexConnect API
+api = forexconnect.API()
+
+# Login to the API
+api.login()
+
+# Set the base currency and the quote currency
+base_currency = "EUR"
+quote_currency = "USD"
+
+# Set the trade size in units of the base currency
+trade_size = 10000
+
+# Set the stop loss and take profit levels
+stop_loss = 0.0005
+take_profit = 0.0015
+
+while True:
+    # Get the current price of the currency pair
+    current_price = api.get_price(base_currency + quote_currency)
+
+    # Check if the current price is above or below the moving average
+    if current_price > moving_average:
+        # Buy the currency pair
+        api.create_market_buy_order(base_currency + quote_currency, trade_size)
+
+        # Set the stop loss and take profit levels for the trade
+        api.set_stop_loss(base_currency + quote_currency, stop_loss)
+        api.set_take_profit(base_currency + quote_currency, take_profit)
+    else:
+        # Sell the currency pair
+        api.create_market_sell_order(base_currency + quote_currency, trade_size)
+
+        # Set the stop loss and take profit levels for the trade
+        api.set_stop_loss(base_currency + quote_currency, stop_loss)
+        api.set_take_profit(base_currency + quote_currency, take_profit)
+
+    # Wait for 5 minutes before checking the price again
+    time.sleep(300)
+
+# Logout of the API
+api.logout()
