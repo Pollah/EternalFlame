@@ -1,0 +1,40 @@
+from flask import Flask, request
+from datetime import datetime
+
+app = Flask(__name__)
+
+# A list to store the fitness activities of all users
+fitness_activities = []
+
+@app.route('/add_activity', methods=['POST'])
+def add_activity():
+  # Extract the request data
+  user_id = request.json['user_id']
+  activity_type = request.json['activity_type']
+  duration = request.json['duration']
+
+  # Create a dictionary to store the activity data
+  activity = {
+    'user_id': user_id,
+    'activity_type': activity_type,
+    'duration': duration,
+    'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  }
+
+  # Add the activity to the list
+  fitness_activities.append(activity)
+
+  return 'Activity added successfully!'
+
+@app.route('/get_activities', methods=['GET'])
+def get_activities():
+  # Extract the user_id from the request query parameters
+  user_id = request.args.get('user_id')
+
+  # Filter the list of activities to get only the activities for the specified user
+  user_activities = [activity for activity in fitness_activities if activity['user_id'] == user_id]
+
+  return user_activities
+
+if __name__ == '__main__':
+  app.run()
