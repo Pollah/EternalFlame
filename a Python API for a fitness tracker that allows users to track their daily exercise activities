@@ -1,0 +1,55 @@
+import flask
+from flask import request, jsonify
+
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
+
+# create some test data for our catalog in the form of a list of dictionaries
+exercise_activities = [
+    {'id': 0,
+     'activity_name': 'Running',
+     'duration_minutes': 30,
+     'calories_burned': 200},
+    {'id': 1,
+     'activity_name': 'Yoga',
+     'duration_minutes': 60,
+     'calories_burned': 100},
+    {'id': 2,
+     'activity_name': 'Weightlifting',
+     'duration_minutes': 45,
+     'calories_burned': 250}
+]
+
+@app.route('/', methods=['GET'])
+def home():
+    return '''<h1>Fitness Tracker API</h1>
+<p>A prototype API for tracking daily exercise activities.</p>'''
+
+@app.route('/api/v1/resources/exercise/all', methods=['GET'])
+def api_all():
+    return jsonify(exercise_activities)
+
+@app.route('/api/v1/resources/exercise', methods=['GET'])
+def api_id():
+    # Check if an ID was provided as part of the URL.
+    # If ID is provided, assign it to a variable.
+    # If no ID is provided, display an error in the browser.
+    if 'id' in request.args:
+        id = int(request.args['id'])
+    else:
+        return "Error: No id field provided. Please specify an id."
+
+    # Create an empty list for our results
+    results = []
+
+    # Loop through the data and match results that fit the requested ID.
+    # IDs are unique, but other fields might return many results
+    for exercise in exercise_activities:
+        if exercise['id'] == id:
+            results.append(exercise)
+
+    # Use the jsonify function from Flask to convert our list of
+    # Python dictionaries to the JSON format.
+    return jsonify(results)
+
+app.run()
